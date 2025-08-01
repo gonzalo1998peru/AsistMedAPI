@@ -1,20 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using AsistMedAPI.Data;
+using AsistMedAPI.Services; // ⬅️ NECESARIO para que reconozca EvaluadorIA
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Registro de servicios personalizados
+builder.Services.AddScoped<EvaluadorIA>(); // ⬅️ REGISTRO FALTANTE
 
 builder.Services.AddDbContext<AsistMedContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

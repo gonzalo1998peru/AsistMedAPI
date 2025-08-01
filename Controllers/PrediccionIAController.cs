@@ -1,103 +1,58 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AsistMedAPI.Data;
+using AsistMedAPI.Models.DTO;
+using AsistMedAPI.Services;
 using AsistMedAPI.Models;
+using AsistMedAPI.Data;
 
 namespace AsistMedAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    
     public class PrediccionIAController : ControllerBase
     {
+        private readonly EvaluadorIA _evaluadorIA;
         private readonly AsistMedContext _context;
 
-        public PrediccionIAController(AsistMedContext context)
+        public PrediccionIAController(EvaluadorIA evaluadorIA, AsistMedContext context)
         {
+            _evaluadorIA = evaluadorIA;
             _context = context;
         }
 
-        // GET: api/PrediccionIA
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PrediccionIA>>> GetPrediccionesIA()
+        [HttpPost("evaluar")]
+        public async Task<ActionResult<ResultadoPrediccionDto>> EvaluarEnfermedad([FromBody] EvaluacionCompletaDto datos)
         {
-            return await _context.PrediccionesIA
-                .Include(p => p.Paciente)
-                .ToListAsync();
-        }
+            if (datos == null)
+            {
+                return BadRequest("Datos incompletos.");
+            }
 
-        // GET: api/PrediccionIA/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PrediccionIA>> GetPrediccionIA(int id)
-        {
-            var prediccion = await _context.PrediccionesIA
-                .Include(p => p.Paciente)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            // Ejecutar IA
+            var resultado = _evaluadorIA.Evaluar(datos);
 
-            if (prediccion == null)
-                return NotFound();
+            // Calcular riesgos complementarios
+            string riesgoDigestivo = _evaluadorIA.CalcularRiesgoDigestivo(datos);
+            string riesgoClinico = _evaluadorIA.CalcularRiesgoClinico(datos);
+            string riesgoNutricional = _evaluadorIA.CalcularRiesgoNutricional(datos);
 
-            return prediccion;
-        }
-
-        // POST: api/PrediccionIA
-        [HttpPost]
-        public async Task<ActionResult<PrediccionIA>> PostPrediccionIA(PrediccionIA prediccion)
-        {
-            prediccion.FechaPrediccion = DateTime.SpecifyKind(prediccion.FechaPrediccion, DateTimeKind.Utc);
+            // Crear registro completo
+            var prediccion = new PrediccionIA
+            {
+                PacienteId = datos.PacienteId,
+                EnfermedadPredicha = resultado.Enfermedad,
+                PorcentajeConfianza = resultado.Porcentaje,
+                HistorialDescriptivo = resultado.Factores,
+                FechaPrediccion = DateTime.UtcNow,
+                RiesgoDigestivo = riesgoDigestivo,
+                RiesgoClinico = riesgoClinico,
+                RiesgoNutricional = riesgoNutricional
+            };
 
             _context.PrediccionesIA.Add(prediccion);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException?.Message.Contains("violates foreign key") == true)
-                    return BadRequest("El paciente_id no existe en la tabla Paciente.");
-                throw;
-            }
-
-            return CreatedAtAction(nameof(GetPrediccionIA), new { id = prediccion.Id }, prediccion);
-        }
-
-        // PUT: api/PrediccionIA/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPrediccionIA(int id, PrediccionIA prediccion)
-        {
-            if (id != prediccion.Id)
-                return BadRequest("El ID de la URL no coincide con el objeto.");
-
-            prediccion.FechaPrediccion = DateTime.SpecifyKind(prediccion.FechaPrediccion, DateTimeKind.Utc);
-
-            _context.Entry(prediccion).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _context.PrediccionesIA.AnyAsync(e => e.Id == id))
-                    return NotFound();
-                throw;
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/PrediccionIA/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePrediccionIA(int id)
-        {
-            var prediccion = await _context.PrediccionesIA.FindAsync(id);
-            if (prediccion == null)
-                return NotFound();
-
-            _context.PrediccionesIA.Remove(prediccion);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(resultado);
         }
     }
 }
