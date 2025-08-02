@@ -4,10 +4,19 @@ namespace AsistMedAPI.Models.DTO
 {
     public class InformeClinicoResultadoDto
     {
-        public string? DiagnosticoFinal { get; set; }
-        public string? RiesgosDetectados { get; set; }
-        public string? RecomendacionesClinicas { get; set; }
-        public string FechaGeneracion { get; set; } = string.Empty;
-        public int PacienteId { get; set; }
+        public DateTime Fecha { get; set; }
+        public string? DNI { get; set; }
+
+        public string? HistorialGeneral { get; set; }
+        public string? HistorialGastroenterologico { get; set; }
+        public string? HistorialNutricional { get; set; }
+
+        public string? DiagnosticoMedico { get; set; }
+        public string? DiagnosticoGastro { get; set; }
+        public string? DiagnosticoNutricional { get; set; }
+
+        public string? FactoresDeRiesgo { get; set; }
+
+        public string? ResultadoTexto { get; set; }
     }
 }

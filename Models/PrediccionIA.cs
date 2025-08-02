@@ -41,5 +41,13 @@ namespace AsistMedAPI.Models
 
         [Column("historial_descriptivo")]
         public string? HistorialDescriptivo { get; set; }
+
+        [Column("factores_riesgo")]
+        public string? Factores { get; set; }
+
+        
+        
+        
+
     }
 }

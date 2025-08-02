@@ -140,7 +140,7 @@ namespace AsistMedAPI.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     paciente_id = table.Column<int>(type: "integer", nullable: false),
-                    presion_arterial = table.Column<string>(type: "text", nullable: true),
+                    
                     frecuencia_cardiaca = table.Column<int>(type: "integer", nullable: true),
                     frecuencia_respiratoria = table.Column<int>(type: "integer", nullable: true),
                     temperatura = table.Column<double>(type: "double precision", nullable: true),

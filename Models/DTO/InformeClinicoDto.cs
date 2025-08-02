@@ -9,7 +9,7 @@ namespace AsistMedAPI.Models.DTO
         public int PacienteId { get; set; }
 
         // Datos de signos vitales
-        public string? PresionArterial { get; set; }
+        
         public int? FrecuenciaCardiaca { get; set; }
         public int? FrecuenciaRespiratoria { get; set; }
         public double? Temperatura { get; set; }

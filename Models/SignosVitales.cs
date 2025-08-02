@@ -19,9 +19,14 @@ namespace AsistMedAPI.Models
 
         public Paciente? Paciente { get; set; }
 
-        [Column("presion_arterial")]
-        [JsonPropertyName("presion")]
-        public string? PresionArterial { get; set; }
+        [Column("presion_sistolica")]
+        [JsonPropertyName("presionSistolica")]
+        public int? PresionSistolica { get; set; }
+
+        [Column("presion_diastolica")]
+        [JsonPropertyName("presionDiastolica")]
+        public int? PresionDiastolica { get; set; }
+
 
         [Column("frecuencia_cardiaca")]
         [JsonPropertyName("frecuenciaCardiaca")]

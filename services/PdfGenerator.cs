@@ -64,15 +64,15 @@ namespace AsistMedAPI.Services
 
         // Métodos auxiliares para formatear texto clínico
         private static string FormatearHistorialGeneral(EvaluacionClinica clinica) =>
-            $"Fatiga: {(clinica.Fatiga == true ? "Sí" : "No")}, " +
-            $"Dolor Abdominal: {(clinica.DolorAbdominal == true ? "Sí" : "No")}, " +
-            $"Alergias: {(clinica.Alergias == true ? "Sí" : "No")}";
+        $"Fatiga: {(clinica.Fatiga == true ? "Sí" : "No")}, " +
+        $"Medicamentos actuales: {(clinica.MedicamentosActuales == true ? "Sí" : "No")}, " +
+        $"Alergias: {(clinica.Alergias == true ? "Sí" : "No")}";
 
         private static string FormatearHistorialGastro(SintomasDigestivos sintomas) =>
-            $"Dolor estomacal: {(sintomas.DolorEstomacal == true ? "Sí" : "No")}, " +
-            $"Náusea: {(sintomas.Nausea == true ? "Sí" : "No")}, " +
-            $"Vómito: {(sintomas.Vomito == true ? "Sí" : "No")}, " +
-            $"Zona dolor: {sintomas.ZonaDolor}";
+        $"Distensión abdominal: {(sintomas.DistensionAbdominal == true ? "Sí" : "No")}, " +
+        $"Náusea: {(sintomas.Nausea == true ? "Sí" : "No")}, " +
+        $"Vómito: {(sintomas.Vomito == true ? "Sí" : "No")}, " +
+        $"Zona dolor abdominal: {sintomas.ZonaDolorAbdominal}";
 
         private static string FormatearHistorialNutricional(EvaluacionNutricional nutricion) =>
             $"Consumo ultraprocesados: {(nutricion.ConsumoUltraprocesados == true ? "Sí" : "No")}, " +

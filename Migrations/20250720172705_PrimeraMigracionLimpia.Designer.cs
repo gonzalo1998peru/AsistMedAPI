@@ -294,10 +294,6 @@ namespace AsistMedAPI.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("peso_kg");
 
-                    b.Property<string>("PresionArterial")
-                        .HasColumnType("text")
-                        .HasColumnName("presion_arterial");
-
                     b.Property<int?>("SaturacionOxigeno")
                         .HasColumnType("integer")
                         .HasColumnName("saturacion_oxigeno");

@@ -41,5 +41,9 @@ namespace AsistMedAPI.Models
 
         [Column("fecha_evaluacion")]
         public DateTime FechaEvaluacion { get; set; }
+
+        [Column("observaciones")]
+        public string? Observaciones { get; set; }
+
     }
 }

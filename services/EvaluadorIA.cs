@@ -11,24 +11,45 @@ namespace AsistMedAPI.Services
             string factores = "";
             double probabilidad = 0.0;
 
-            // Reglas simples para enfermedad principal
-            if (datos.DolorEstomacal && datos.SangradoDigestivo)
+            // 🧠 Puntuaciones por enfermedad
+            int scoreGastritis = 0;
+            int scoreUlceras = 0;
+            int scoreMetabolico = 0;
+
+            // 🔍 Evaluar Gastritis
+            if (datos.DolorEstomacal) scoreGastritis++;
+            if (datos.Nausea) scoreGastritis++;
+            if (datos.Vomito) scoreGastritis++;
+            if (datos.ArdorEstomacal) scoreGastritis++;
+
+            // 🔍 Evaluar Úlcera Gástrica
+            if (datos.DolorEstomacal) scoreUlceras++;
+            if (datos.SangradoDigestivo) scoreUlceras++;
+            if (datos.AntecedentesPatologicos) scoreUlceras++;
+
+            // 🔍 Evaluar Síndrome Metabólico
+            if (datos.ConsumoUltraprocesados) scoreMetabolico++;
+            if (datos.GlucosaMgDl > 110) scoreMetabolico++;
+            if (datos.Imc >= 30) scoreMetabolico++;
+
+            // 🧾 Evaluación priorizada por mayor puntuación
+            if (scoreUlceras >= 2)
             {
                 enfermedad = "Úlcera gástrica";
-                factores = "Dolor + Sangrado";
-                probabilidad = 85.5;
+                probabilidad = 85;
+                factores = "Dolor, sangrado o antecedentes";
             }
-            else if (datos.ConsumoUltraprocesados && datos.GlucosaMgDl > 110)
-            {
-                enfermedad = "Síndrome Metabólico";
-                factores = "Dieta poco saludable + Glucosa elevada";
-                probabilidad = 75.0;
-            }
-            else if (datos.Nausea && datos.Vomito && datos.ArdorEstomacal)
+            else if (scoreGastritis >= 2)
             {
                 enfermedad = "Gastritis";
-                factores = "Síntomas digestivos agudos";
-                probabilidad = 65.2;
+                probabilidad = 75;
+                factores = "Síntomas digestivos múltiples";
+            }
+            else if (scoreMetabolico >= 2)
+            {
+                enfermedad = "Síndrome Metabólico";
+                probabilidad = 65;
+                factores = "Dieta y glucosa alteradas";
             }
 
             return new ResultadoPrediccionDto
@@ -39,7 +60,7 @@ namespace AsistMedAPI.Services
             };
         }
 
-        // Riesgo Digestivo
+        // 📊 Riesgo Digestivo
         public string CalcularRiesgoDigestivo(EvaluacionCompletaDto datos)
         {
             int sintomas = 0;
@@ -54,7 +75,7 @@ namespace AsistMedAPI.Services
             return "Bajo";
         }
 
-        // Riesgo Clínico
+        // 📊 Riesgo Clínico
         public string CalcularRiesgoClinico(EvaluacionCompletaDto datos)
         {
             int score = 0;
@@ -68,7 +89,7 @@ namespace AsistMedAPI.Services
             return "Bajo";
         }
 
-        // Riesgo Nutricional
+        // 📊 Riesgo Nutricional
         public string CalcularRiesgoNutricional(EvaluacionCompletaDto datos)
         {
             int score = 0;

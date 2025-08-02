@@ -26,6 +26,8 @@ namespace AsistMedAPI.Models
         [Required]
         [Column("paciente_id")]
         [ForeignKey("Paciente")]
+
+        
         public int PacienteId { get; set; }
 
         public Paciente? Paciente { get; set; }

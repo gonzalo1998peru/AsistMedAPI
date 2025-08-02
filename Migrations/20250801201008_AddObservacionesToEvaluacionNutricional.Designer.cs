@@ -3,6 +3,7 @@ using System;
 using AsistMedAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AsistMedAPI.Migrations
 {
     [DbContext(typeof(AsistMedContext))]
-    partial class AsistMedContextModelSnapshot : ModelSnapshot
+    [Migration("20250801201008_AddObservacionesToEvaluacionNutricional")]
+    partial class AddObservacionesToEvaluacionNutricional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +86,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("evaluacion_clinica", (string)null);
+                    b.ToTable("evaluacion_clinica");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.EvaluacionNutricional", b =>
@@ -135,7 +138,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("evaluacion_nutricional", (string)null);
+                    b.ToTable("evaluacion_nutricional");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.Paciente", b =>
@@ -183,7 +186,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("paciente", (string)null);
+                    b.ToTable("paciente");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.PrediccionDetallePdf", b =>
@@ -219,7 +222,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("prediccion_detalle_pdf", (string)null);
+                    b.ToTable("prediccion_detalle_pdf");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.PrediccionIA", b =>
@@ -271,7 +274,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("prediccion_ia", (string)null);
+                    b.ToTable("prediccion_ia");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.SignosVitales", b =>
@@ -346,7 +349,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("signos_vitales", (string)null);
+                    b.ToTable("signos_vitales");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.SintomasDigestivos", b =>
@@ -442,7 +445,7 @@ namespace AsistMedAPI.Migrations
 
                     b.HasIndex("PacienteId");
 
-                    b.ToTable("sintomas_digestivos", (string)null);
+                    b.ToTable("sintomas_digestivos");
                 });
 
             modelBuilder.Entity("AsistMedAPI.Models.EvaluacionClinica", b =>

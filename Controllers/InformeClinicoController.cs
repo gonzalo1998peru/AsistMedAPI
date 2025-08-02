@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using AsistMedAPI.Models;
 using AsistMedAPI.Models.DTO;
-using AsistMedAPI.Data; // Asegúrate de tener esto para acceder a tu contexto
+using AsistMedAPI.Data;
 using System.Threading.Tasks;
 
 namespace AsistMedAPI.Controllers
@@ -17,48 +18,40 @@ namespace AsistMedAPI.Controllers
             _context = context;
         }
 
-        [HttpPost]
+        // Endpoint para devolver informe clínico completo desde la BD
+        [HttpGet("{pacienteId}")]
         [ProducesResponseType(typeof(InformeClinicoResultadoDto), 200)]
-        [ProducesResponseType(400)]
-        public async Task<ActionResult<InformeClinicoResultadoDto>> GenerarInforme([FromBody] InformeClinicoDto datos)
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<InformeClinicoResultadoDto>> ObtenerInformePorPaciente(int pacienteId)
         {
-            if (datos == null)
-                return BadRequest("Datos clínicos incompletos.");
+            var paciente = await _context.Pacientes.FindAsync(pacienteId);
+            if (paciente == null)
+                return NotFound("Paciente no encontrado");
+
+            var signos = await _context.SignosVitales.FirstOrDefaultAsync(s => s.PacienteId == pacienteId);
+            var clinica = await _context.EvaluacionesClinicas.FirstOrDefaultAsync(c => c.PacienteId == pacienteId);
+            var sintomas = await _context.SintomasDigestivos.FirstOrDefaultAsync(s => s.PacienteId == pacienteId);
+            var nutricion = await _context.EvaluacionesNutricionales.FirstOrDefaultAsync(n => n.PacienteId == pacienteId);
+            var resultado = await _context.PrediccionesIA.FirstOrDefaultAsync(r => r.PacienteId == pacienteId);
+
+            if (resultado == null)
+                return NotFound("No hay predicción para este paciente.");
 
             var informe = new InformeClinicoResultadoDto
             {
-                DiagnosticoFinal = datos.DiagnosticoFinal,
-                RiesgosDetectados = $"Riesgo digestivo: {datos.RiesgoDigestivo?.ToLower()}, " +
-                                    $"riesgo nutricional: {datos.RiesgoNutricional?.ToLower()}, " +
-                                    $"riesgo clínico: {datos.RiesgoClinico?.ToLower()}",
-                RecomendacionesClinicas = datos.RecomendacionesClinicas,
-                FechaGeneracion = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                PacienteId = datos.PacienteId
+                Fecha = resultado.FechaPrediccion,
+                DNI = paciente.DNI,
+                HistorialGeneral = clinica?.ObservacionesGenerales ?? "Sin datos",
+                HistorialGastroenterologico = sintomas?.NotasEspecialista ?? "Sin datos",
+                HistorialNutricional = nutricion != null
+                    ? $"Consume {nutricion.ConsumoUltraprocesados} ultraprocesados, toma {nutricion.CantidadAguaDia} vasos de agua al día."
+                    : "Sin datos",
+                DiagnosticoMedico = resultado.EnfermedadPredicha,
+                DiagnosticoGastro = resultado.EnfermedadPredicha,
+                DiagnosticoNutricional = "Evaluación nutricional pendiente",
+                FactoresDeRiesgo = resultado.Factores ?? "No registrados",
+                ResultadoTexto = $"Se predice con {resultado.PorcentajeConfianza ?? 0}% la enfermedad: {resultado.EnfermedadPredicha}"
             };
-
-            // Armar el historial clínico descriptivo
-            var descripcion = $"[CLÍNICO] {datos.ObservacionClinica}\n" +
-                              $"[DIGESTIVO] {datos.ObservacionSintomas}\n" +
-                              $"[NUTRICIONAL] {datos.ObservacionNutricional}\n" +
-                              $"[SIGNOS VITALES] {datos.ObservacionSignosVitales}\n" +
-                              $"[OBSERVACIÓN GENERAL] {datos.ObservacionGeneral}";
-
-            // Guardar en la base de datos
-            var prediccion = new PrediccionIA
-            {
-                PacienteId = datos.PacienteId,
-                RiesgoDigestivo = datos.RiesgoDigestivo,
-                RiesgoNutricional = datos.RiesgoNutricional,
-                RiesgoClinico = datos.RiesgoClinico,
-                EnfermedadPredicha = datos.DiagnosticoFinal,
-                PorcentajeConfianza = null, // Se completará con la IA real
-                FechaPrediccion = DateTime.UtcNow,
-                HistorialDescriptivo = descripcion,
-                InformePdf = null // Se generará luego con PDF
-            };
-
-            _context.PrediccionesIA.Add(prediccion);
-            await _context.SaveChangesAsync();
 
             return Ok(informe);
         }

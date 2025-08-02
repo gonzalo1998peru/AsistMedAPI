@@ -29,6 +29,8 @@ namespace AsistMedAPI.Models.DTO
         public bool Vomito { get; set; }
         public bool ArdorEstomacal { get; set; }
         public bool SangradoDigestivo { get; set; }
+
+        public bool? Estreñimiento { get; set; }
         public string ZonaDolor { get; set; } = string.Empty;
         public string FrecuenciaDolor { get; set; } = string.Empty;
 
