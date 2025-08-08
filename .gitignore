@@ -1,0 +1,22 @@
+# Archivos binarios y temporales
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+*.swp
+*.DS_Store
+*.log
+
+# Archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
+
+# Archivos sensibles
+*.pfx
+*.key
+*.cer
+
+# Archivos del sistema
+.vscode/
+.env
