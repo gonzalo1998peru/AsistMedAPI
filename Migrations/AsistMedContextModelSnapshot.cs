@@ -178,6 +178,13 @@ namespace AsistMedAPI.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("character varying(8)");
 
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("direccion")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<int>("edad")
                         .HasColumnType("integer");
 
@@ -185,7 +192,13 @@ namespace AsistMedAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("telefono")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
                     b.HasKey("Dni");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("paciente");
                 });
@@ -212,6 +225,9 @@ namespace AsistMedAPI.Migrations
 
                     b.Property<string>("Dni")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaPrediccion")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Porcentaje")
                         .HasColumnType("text");
@@ -398,6 +414,50 @@ namespace AsistMedAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SignosVitales");
+                });
+
+            modelBuilder.Entity("AsistMedAPI.Models.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contraseña")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("usuarios");
+                });
+
+            modelBuilder.Entity("AsistMedAPI.Models.Paciente", b =>
+                {
+                    b.HasOne("AsistMedAPI.Models.Usuario", "Usuario")
+                        .WithMany("Pacientes")
+                        .HasForeignKey("UsuarioId");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("AsistMedAPI.Models.Usuario", b =>
+                {
+                    b.Navigation("Pacientes");
                 });
 #pragma warning restore 612, 618
         }

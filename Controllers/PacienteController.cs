@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using AsistMedAPI.Models;
 using AsistMedAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AsistMedAPI.Controllers
 {
@@ -17,11 +19,16 @@ namespace AsistMedAPI.Controllers
         }
 
         // POST: api/Paciente
+        [Authorize(Roles = "medico")]
         [HttpPost]
         public async Task<IActionResult> RegistrarPaciente([FromBody] Paciente paciente)
         {
             try
             {
+                // 👇 toma el ID del usuario desde el token
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                paciente.UsuarioId = userId;
+
                 // Verificar si el DNI ya existe
                 var existe = await _context.Pacientes.FindAsync(paciente.Dni);
                 if (existe != null)
@@ -71,9 +78,26 @@ namespace AsistMedAPI.Controllers
             pacienteExistente.edad = pacienteActualizado.edad;
             pacienteExistente.sexo = pacienteActualizado.sexo;
 
+            pacienteExistente.telefono = pacienteActualizado.telefono;
+            pacienteExistente.direccion = pacienteActualizado.direccion;
+
             await _context.SaveChangesAsync();
 
             return Ok(new { mensaje = "Paciente actualizado correctamente." });
+        }
+        
+
+
+        [Authorize(Roles = "medico")]
+        [HttpGet("mis-pacientes")]
+        public async Task<IActionResult> MisPacientes()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var pacientes = await _context.Pacientes
+                .Where(p => p.UsuarioId == userId)
+                .ToListAsync();
+
+            return Ok(pacientes);
         }
     }
 }

@@ -19,5 +19,8 @@ namespace AsistMedAPI.Data
         public DbSet<EvaluacionGI> EvaluacionGI { get; set; }
 
         public DbSet<EvaluacionNutricion> EvaluacionNutricion { get; set; }    
+
+        public DbSet<Usuario> Usuarios { get; set; }
+
     }
 }

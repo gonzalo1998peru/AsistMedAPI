@@ -4,7 +4,7 @@ namespace AsistMedAPI.Models
 {
     [Table("PrediccionesIA")]
     public class PrediccionIA
-    {       
+    {
         public int Id { get; set; }
         public string? Dni { get; set; }
         public int edad { get; set; }
@@ -54,5 +54,7 @@ namespace AsistMedAPI.Models
         public string? DiagnosticoGastro { get; set; }
         public string? DiagnosticoNutri { get; set; }
         public string? Porcentaje { get; set; }
+        public DateTime FechaPrediccion { get; set; } = DateTime.UtcNow;
+
     }
 }

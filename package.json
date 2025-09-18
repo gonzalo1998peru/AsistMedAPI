@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "react-router-dom": "^7.8.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0"
+  },
+  "scripts": {
+  "dev:api": "dotnet watch --project ./AsistMedAPI.csproj",
+
+  "dev:web": "npm --prefix \"C:/Users/Usuario/Downloads/asist-med-front-main/asist-med-front-main\" run dev",
+
+  "dev:ia": "cmd /c \"cd /d C:\\Users\\Usuario\\Desktop\\prediccion && chcp 65001>nul && set PYTHONIOENCODING=utf-8 && py -3 app.py\"",
+
+  "dev": "concurrently -n API,WEB,IA -c blue,green,magenta \"npm:dev:api\" \"npm:dev:web\" \"npm:dev:ia\""
+}
+
+
+}
